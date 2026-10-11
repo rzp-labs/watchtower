@@ -6127,11 +6127,20 @@
       window.setTimeout(() => addCorrectionItem(sceneMatch[1]), 0);
     });
     menuObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
-    try {
-      ReactDOM.render(React.createElement(SceneCorrectionModal), root);
-    } catch (error) {
-      console.error("[LibraryManager] Could not mount filename correction modal:", error);
+    // Bootstrap does not depend on the host MUI ThemeProvider. MUI controls
+    // are mounted from the host tree below so their portal retains context.
+    if (api.libraries.Bootstrap) {
+      try {
+        ReactDOM.render(React.createElement(SceneCorrectionModal), root);
+      } catch (error) {
+        console.error("[LibraryManager] Could not mount filename correction modal:", error);
+      }
     }
+  }
+
+  function SceneCorrectionPortal() {
+    const root = document.getElementById("librarymanager-correction-root");
+    return root ? ReactDOM.createPortal(React.createElement(SceneCorrectionModal), root) : null;
   }
 
   window.StashLibraryManager = Object.freeze({
@@ -6144,11 +6153,12 @@
   });
 
   api.register.route(PATH, Dashboard);
+  installSceneMenuCorrection();
   api.patch.before("MainNavBar.UtilityItems", function (props) {
     return [{ children: React.createElement(React.Fragment, null, props.children,
-      React.createElement(NavStatus)) }];
+      React.createElement(NavStatus),
+      !api.libraries.Bootstrap && React.createElement(SceneCorrectionPortal)) }];
   });
-  installSceneMenuCorrection();
   // This is idempotent: the backend returns immediately when the monitor is already alive.
   getConfig().then(config => {
     if (config.autoStartMonitor === true) operation("ensure_monitor").catch(error =>

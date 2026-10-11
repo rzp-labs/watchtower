@@ -34,10 +34,10 @@ Watchtower is designed to make potentially disruptive operations visible and rev
 
 Watchtower uses the host's `PluginApi.libraries.Bootstrap` controls on upstream Stash. On MUI hosts such as Vexxx, its buttons, dialogs and filename field use the host's `PluginApi.libraries.MUI` instance. This mapping is local to Watchtower and does not change the host's global plugin API.
 
-The offline UI suite covers startup on both hosts and the MUI control lifecycle. To include real React/MUI rendering checks, point it at an existing Vexxx UI dependency installation:
+The offline UI suite covers startup on both hosts and the MUI control lifecycle. The filename correction dialog uses a portal from the host navbar tree to retain its theme when rendered outside the navbar DOM. To include real React/MUI rendering checks, point it at an existing Vexxx UI dependency installation:
 
 ```sh
-WATCHTOWER_TEST_DEPENDENCIES=/path/to/vexxx/ui/v2.5 node --test tests/test_ui.mjs tests/test_ui_compat.mjs
+WATCHTOWER_TEST_DEPENDENCIES=/path/to/vexxx/ui/v2.5 node --test --test-concurrency=1 tests/test_ui.mjs tests/test_ui_compat.mjs tests/test_ui_theme.mjs
 ```
 
 ## Key features
