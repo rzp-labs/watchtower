@@ -1,3 +1,9 @@
+## 1.0.18-rzp.2 (2026-10-11)
+
+- Restore Watchtower dependency discovery after container replacement by validating and using the persisted PythonTools package directory within each Watchtower process.
+- Preserve system packages, configured interpreter and bundled watchdog. Report missing, broken, ambiguous or incompatible dependency environments without installing or masking import failures.
+- Cover independent entrypoints, replacement durability and failure cases in offline tests and PR CI.
+
 # Changelog
 
 ## 1.0.18 — 2026-09-24

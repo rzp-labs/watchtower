@@ -1,21 +1,29 @@
 name: Verify plugin package
 on:
   workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
 permissions:
   contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.14"]
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python }}
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
+      - run: python -B -m unittest discover -s tests -p test_persistent_dependencies.py
+      - run: python -B -m unittest discover -s tests -p test_bundled_watchdog.py
       - run: python -m unittest discover -s tests -p test_packaging.py
       - run: node --check librarymanager.js
       - run: node --test tests/test_ui.mjs tests/test_ui_compat.mjs
@@ -23,5 +31,5 @@ jobs:
       - run: python scripts/package_plugin.py --ref HEAD --output dist-repeat && cmp dist/librarymanager.zip dist-repeat/librarymanager.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: watchtower-verified-package
+          name: watchtower-verified-package-${{ matrix.python }}
           path: dist/

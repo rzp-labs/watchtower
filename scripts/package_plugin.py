@@ -22,6 +22,7 @@ ROOT_FILES = {
     "docs/MAINTAINED_RELEASE.md",
     "librarymanager.py", "librarymanager_core.py", "librarymanager_monitor.py",
     "librarymanager_reconciliation.py", "librarymanager_startup.py",
+    "librarymanager_dependencies.py",
 }
 TREES = {"assets", "watchdog", "vendor-licenses"}
 
@@ -95,7 +96,7 @@ def build(repo, ref, output):
     digest = hashlib.sha256(package).hexdigest()
     feed = (
         "- id: librarymanager\n  name: Watchtower\n  metadata:\n"
-        "    description: Maintained Watchtower with MUI host compatibility.\n"
+        "    description: Maintained Watchtower with MUI compatibility and persistent Python dependencies.\n"
         f"  version: {version}-{sha[:7]}\n  date: \"{when.strftime('%Y-%m-%d %H:%M:%S')}\"\n"
         f"  path: {REPOSITORY}/releases/download/v{version}/librarymanager.zip\n  sha256: {digest}\n"
     ).encode()
