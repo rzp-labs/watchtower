@@ -16,6 +16,10 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+from librarymanager_dependencies import ensure_stashapi
+
+ensure_stashapi()
+
 from stashapi.stashapp import StashInterface
 
 from librarymanager_core import (

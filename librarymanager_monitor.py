@@ -368,6 +368,10 @@ import queue
 import time
 from pathlib import Path
 
+from librarymanager_dependencies import ensure_stashapi
+
+ensure_stashapi()
+
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 from stashapi.stashapp import StashInterface

@@ -28,7 +28,7 @@ class PackageSafetyTests(unittest.TestCase):
                 pack.package_names(self.entries() + [entry])
 
     def test_package_requires_license_and_all_runtime_code(self):
-        for omitted in ["LICENSE", "NOTICE.md", "librarymanager.js", "librarymanager.yml", "librarymanager_core.py"]:
+        for omitted in ["LICENSE", "NOTICE.md", "librarymanager.js", "librarymanager.yml", "librarymanager_core.py", "librarymanager_dependencies.py"]:
             with self.subTest(omitted=omitted), self.assertRaises(ValueError):
                 pack.package_names([entry for entry in self.entries() if entry[1] != omitted])
 
