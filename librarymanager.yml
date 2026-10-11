@@ -1,6 +1,7 @@
 name: Watchtower
 description: Safely inventories Stash scene files and reports filesystem differences.
-version: 1.0.18
+version: 1.0.18-rzp.1
+url: https://github.com/rzp-labs/watchtower
 ui:
   javascript:
     - librarymanager.js

@@ -1,3 +1,5 @@
+// Modified by rzp-labs, 2026-10-11: MUI host compatibility and themed correction portal.
+// AGPL-3.0 declaration retained from upstream README; see LICENSE and NOTICE.md.
 (function () {
   "use strict";
   const api = window.PluginApi;

@@ -1,0 +1,27 @@
+name: Verify plugin package
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: python -m unittest discover -s tests -p test_packaging.py
+      - run: node --check librarymanager.js
+      - run: node --test tests/test_ui.mjs tests/test_ui_compat.mjs
+      - run: python scripts/package_plugin.py --ref HEAD --output dist
+      - run: python scripts/package_plugin.py --ref HEAD --output dist-repeat && cmp dist/librarymanager.zip dist-repeat/librarymanager.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: watchtower-verified-package
+          path: dist/

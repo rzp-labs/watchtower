@@ -1,3 +1,13 @@
+# Maintained rzp-labs Watchtower distribution
+
+This fork preserves upstream Watchtower history and its AGPL-3.0 declaration. The full license text is in [LICENSE](LICENSE); dated modifications and reviewed source provenance are in [NOTICE.md](NOTICE.md). Maintained changes are released under GNU AGPL version 3. The upstream README below is retained for attribution and historical context.
+
+Maintained plugin source: `https://github.com/rzp-labs/watchtower/releases/latest/download/index.yml`
+
+Versioned releases include `librarymanager.zip`, its checksum, feed index and exact corresponding-source provenance. The package contains plugin code/assets/notices only, never local configuration, database, history or reports. Install it as the existing `librarymanager` package ID in the same plugin directory; do not uninstall the old package first. See [release and rollback procedure](docs/MAINTAINED_RELEASE.md).
+
+---
+
 <div align="center">
 
 <img src="assets/watchtower-header.png" alt="Watchtower for Stash" width="100%" />
