@@ -19,6 +19,7 @@ LICENSE_SHA256 = "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abc
 ROOT_FILES = {
     "LICENSE", "NOTICE.md", "README.md", "CHANGELOG.md", "DISCOURSE_POST.md",
     "requirements.txt", "librarymanager.yml", "librarymanager.js", "librarymanager.css",
+    "docs/MAINTAINED_RELEASE.md",
     "librarymanager.py", "librarymanager_core.py", "librarymanager_monitor.py",
     "librarymanager_reconciliation.py", "librarymanager_startup.py",
 }
