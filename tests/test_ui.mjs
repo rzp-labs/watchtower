@@ -617,7 +617,7 @@ test("backlog evaluation preserves filenames and exact reasons behind summary co
   assert.match(css, /\.lm-backlog-result-list/);
 });
 
-test("every dashboard tab, including Incoming Downloads, renders without ReferenceError", () => {
+for (const designSystem of ["Bootstrap", "MUI"]) test(`every dashboard tab renders on a ${designSystem} host without ReferenceError`, () => {
   const registeredRoutes = {};
   let requestedTab = "overview";
   let requestedTerminalFilter = "all";
@@ -641,6 +641,8 @@ test("every dashboard tab, including Incoming Downloads, renders without Referen
     contactSheetScope: "incoming"
   };
   const ReactMock = {
+    createContext: () => ({ Provider: "Provider" }),
+    useContext: () => null,
     useState: (initial) => {
       const index = stateCall++;
       let value = typeof initial === "function" ? initial() : initial;
@@ -690,7 +692,9 @@ test("every dashboard tab, including Incoming Downloads, renders without Referen
       ReactDOM: { createPortal: (node) => node, render: () => {} },
       libraries: {
         ReactRouterDOM: { NavLink: () => null },
-        Bootstrap: { Button: ButtonMock, Modal: ModalMock, Form: { Check: () => null, Control: () => null } }
+        ...(designSystem === "Bootstrap"
+          ? { Bootstrap: { Button: ButtonMock, Modal: ModalMock, Form: { Check: () => null, Control: () => null } } }
+          : { MUI: Object.fromEntries(["Button", "Dialog", "DialogTitle", "IconButton", "Typography", "DialogContent", "DialogActions", "FormControl", "FormLabel", "TextField"].map(name => [name, `mui-${name}`])) })
       },
       register: {
         route: (path, component) => { registeredRoutes[path] = component; }

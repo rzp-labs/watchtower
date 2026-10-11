@@ -6,7 +6,71 @@
   const ReactDOM = api.ReactDOM;
   const { useState, useEffect, useRef, useMemo, useCallback } = React;
   const { NavLink } = api.libraries.ReactRouterDOM;
-  const { Button, Modal, Form } = api.libraries.Bootstrap;
+  const { Button, Modal, Form } = createUiComponents(api.libraries);
+
+  // Watchtower only needs these controls. Keep upstream Stash's Bootstrap
+  // components when available, and use the host MUI instance on Vexxx.
+  function createUiComponents(libraries) {
+    if (libraries.Bootstrap) return libraries.Bootstrap;
+    const mui = libraries.MUI;
+    if (!mui) throw new Error("Watchtower requires Bootstrap or MUI UI components");
+    const CloseContext = React.createContext(null);
+
+    function Button({ variant = "secondary", size, className, children, ...props }) {
+      const tone = variant.replace(/^outline-/, "");
+      return React.createElement(mui.Button, {
+        ...props,
+        className: `btn btn-${variant} ${className || ""}`.trim(),
+        variant: variant.startsWith("outline-") ? "outlined" : "contained",
+        color: tone === "danger" ? "error" : ["primary", "success", "info", "warning"].includes(tone) ? tone : "inherit",
+        size: size === "sm" ? "small" : size === "lg" ? "large" : "medium"
+      }, children);
+    }
+
+    function Modal({ show, onHide, size, dialogClassName, enforceFocus = true,
+      backdrop = true, keyboard = true, centered, children, ...props }) {
+      return React.createElement(CloseContext.Provider, { value: onHide },
+        React.createElement(mui.Dialog, {
+          ...props,
+          className: dialogClassName,
+          open: !!show,
+          fullWidth: true,
+          maxWidth: size === "xl" ? "xl" : size === "lg" ? "lg" : size === "sm" ? "sm" : "md",
+          disableEnforceFocus: !enforceFocus,
+          disableEscapeKeyDown: !keyboard,
+          hideBackdrop: backdrop === false,
+          onClose: (_event, reason) => {
+            if (reason === "backdropClick" && backdrop === "static") return;
+            if (reason === "escapeKeyDown" && !keyboard) return;
+            onHide?.();
+          },
+          slotProps: { paper: { className: "modal-content" } }
+        }, children));
+    }
+    Modal.Header = function Header({ closeButton, children, ...props }) {
+      const onHide = React.useContext(CloseContext);
+      return React.createElement(mui.DialogTitle, { ...props, component: "div", className: "modal-header", sx: { display: "flex", alignItems: "center", justifyContent: "space-between" } },
+        children,
+        closeButton && React.createElement(mui.IconButton, {
+          "aria-label": "Close", onClick: () => onHide?.(), size: "small", style: { float: "right" }
+        }, "×"));
+    };
+    Modal.Title = function Title(props) {
+      return React.createElement(mui.Typography, { ...props, component: "h2", variant: "h6" });
+    };
+    Modal.Body = function Body(props) {
+      return React.createElement(mui.DialogContent, { ...props, className: "modal-body" });
+    };
+    Modal.Footer = function Footer(props) {
+      return React.createElement(mui.DialogActions, { ...props, className: "modal-footer" });
+    };
+    const Form = {
+      Group: props => React.createElement(mui.FormControl, { ...props, fullWidth: true }),
+      Label: props => React.createElement(mui.FormLabel, props),
+      Control: props => React.createElement(mui.TextField, { ...props, fullWidth: true, size: "small" })
+    };
+    return { Button, Modal, Form };
+  }
   const PLUGIN_ID = "librarymanager";
 
   function RestartIcon({ size = 15, className = "lm-btn-icon-svg", spinning = false }) {
@@ -6001,8 +6065,8 @@
         state.error && React.createElement("div", { className: "lm-message error" }, state.error),
         state.current && React.createElement("p", { className: "lm-modal-path" }, React.createElement("b", null, "Current: "), state.current),
         React.createElement(Form.Group, null,
-          React.createElement(Form.Label, null, "Correct filename"),
-          React.createElement(Form.Control, { value: state.filename, disabled: state.busy,
+          React.createElement(Form.Label, { htmlFor: "librarymanager-correct-filename" }, "Correct filename"),
+          React.createElement(Form.Control, { id: "librarymanager-correct-filename", value: state.filename, disabled: state.busy,
             onChange: event => setState(previous => ({ ...previous, filename: event.target.value, preview: null })) })),
         state.preview && React.createElement("div", { className: `lm-correction-preview ${state.preview.status}` },
           React.createElement("strong", null, String(state.preview.status || "").replaceAll("_", " ").replace(/\b\w/g, letter => letter.toUpperCase())),
